@@ -1,10 +1,15 @@
 package com.wang.qrcodecreateandscantool;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 
-
-public class QRCodeCreate extends ActionBarActivity {
+/**
+ *
+ * 生成二维码的activity
+ *
+ * @author wang
+ */
+public class QRCodeCreate extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
