@@ -1,10 +1,14 @@
 package com.wang.qrcodecreateandscantool;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.ipaulpro.afilechooser.FileChooserActivity;
+import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.wang.qrcodecreateandscantool.util.FileRootUtil;
 import com.wang.qrcodecreateandscantool.util.QRCodeCreateUtil;
 
@@ -29,6 +35,7 @@ public class QRCodeCreate extends Activity implements View.OnClickListener {
     private boolean isHaveLogo = false;
 
     private static final String TAG = "QRCodeCreate";
+    private final static int REQUEST_CODE_FILE_CHOOSE = 0x01;
 
     private LinearLayout ll_instructions;
     private LinearLayout ll_qrcode;
@@ -89,12 +96,9 @@ public class QRCodeCreate extends Activity implements View.OnClickListener {
 
             case R.id.bt_qrcode_logo:  //选择二维码logo
                 isHaveLogo = true;
-                //开启图库
-                iv_qrcode_logo.setImageResource(R.drawable.logo);
-                //从图库返回图片的bitmap
-                ll_instructions.setVisibility(View.INVISIBLE);
-                ll_qrcode.setVisibility(View.INVISIBLE);
-                iv_qrcode_logo.setVisibility(View.VISIBLE);
+                Intent intent = new Intent();
+                intent.setClass(this, FileChooserActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_FILE_CHOOSE);
                 break;
 
             case R.id.bt_reset: //重置
@@ -113,10 +117,43 @@ public class QRCodeCreate extends Activity implements View.OnClickListener {
                     qrCodeImg.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(filePath));
                     iv_qrcode_img.setImageBitmap(BitmapFactory.decodeFile(filePath));
                     Toast.makeText(this, "以存放到手机根目录下", Toast.LENGTH_SHORT).show();
-                    Log.i(TAG, filePath);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case REQUEST_CODE_FILE_CHOOSE:
+                if (resultCode == RESULT_OK) {
+                    if (data != null) {
+                        final Uri uri = data.getData();
+                        try {
+                            final String path = FileUtils.getPath(this, uri);
+                            if (path.endsWith(".png") || path.endsWith(".jpg")) {
+                                Log.i(TAG, path);
+                                ContentResolver cr = this.getContentResolver();
+                                Bitmap bmp = MediaStore.Images.Media.getBitmap(cr, uri);
+                                iv_qrcode_logo.setImageBitmap(bmp);
+                                ll_instructions.setVisibility(View.INVISIBLE);
+                                ll_qrcode.setVisibility(View.INVISIBLE);
+                                iv_qrcode_logo.setVisibility(View.VISIBLE);
+                            } else {
+                                Toast.makeText(this, "请选择图片资源", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                break;
+
+            default:
                 break;
         }
     }
