@@ -1,11 +1,128 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".QRCodeCreate">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/tv_create"
+            android:layout_width="0dip"
+            android:layout_height="70dip"
+            android:layout_weight="1"
+            android:background="@drawable/tab_left_pressed"
+            android:gravity="center"
+            android:text="二维码生成器"
+            android:textColor="#000000"
+            android:textSize="23dip" />
+
+        <TextView
+            android:id="@+id/tv_scan"
+            android:layout_width="0dip"
+            android:layout_height="70dip"
+            android:layout_weight="1"
+            android:background="@drawable/tab_right_default"
+            android:gravity="center"
+            android:text="二维码扫描器"
+            android:textColor="#000000"
+            android:textSize="23dip" />
+
+    </LinearLayout>
+
+
+    <EditText
+        android:id="@+id/et_qrcode_context"
+        android:layout_width="fill_parent"
+        android:layout_height="45dip"
+        android:hint="请输入二维码内容"
+        android:inputType="text" />
+
+    <Button
+        android:id="@+id/bt_qrcode_logo"
+        android:layout_width="fill_parent"
+        android:layout_height="45dip"
+        android:gravity="center"
+        android:text="选择二维码标志图片"
+        android:textSize="18dip" />
+
+    <Button
+        android:id="@+id/bt_qrcode_create"
+        android:layout_width="fill_parent"
+        android:layout_height="45dip"
+        android:gravity="center"
+        android:text="生成二维码"
+        android:textSize="18dip" />
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:id="@+id/ll_instructions"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="使用说明：\n    ccc"
+                android:textColor="#000000"
+                android:textSize="18dip" />
+
+            <LinearLayout
+                android:id="@+id/ll_advertisement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"></LinearLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_qrcode_logo"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:src="@drawable/ic_launcher"
+            android:visibility="invisible" />
+
+        <LinearLayout
+            android:id="@+id/ll_qrcode"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+            <ImageView
+                android:id="@+id/iv_qrcode_img"
+                android:layout_weight="10"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:src="@drawable/ic_launcher" />
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/bt_save"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="保存" />
+
+                <Button
+                    android:id="@+id/bt_test"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="测试" />
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>
