@@ -2,6 +2,7 @@ package com.wang.qrcodecreateandscantool;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +13,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.wang.qrcodecreateandscantool.util.FileRootUtil;
 import com.wang.qrcodecreateandscantool.util.QRCodeCreateUtil;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * 生成二维码的activity
@@ -33,6 +38,7 @@ public class QRCodeCreate extends Activity implements View.OnClickListener {
     private Button bt_qrcode_logo;
     private Button bt_qrcode_create;
     private Button bt_reset;
+    private Button bt_save;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +54,12 @@ public class QRCodeCreate extends Activity implements View.OnClickListener {
         iv_qrcode_img = (ImageView) findViewById(R.id.iv_qrcode_img);
         bt_qrcode_logo = (Button) findViewById(R.id.bt_qrcode_logo);
         bt_reset = (Button) findViewById(R.id.bt_reset);
+        bt_save = (Button) findViewById(R.id.bt_save);
 
         bt_qrcode_logo.setOnClickListener(this);
         bt_qrcode_create.setOnClickListener(this);
         bt_reset.setOnClickListener(this);
+        bt_save.setOnClickListener(this);
     }
 
     @Override
@@ -65,22 +73,13 @@ public class QRCodeCreate extends Activity implements View.OnClickListener {
                     Toast.makeText(this, "请输入二维码内容", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Log.i(TAG, context);
                 Bitmap qrCodeBitmap = null;
                 if (isHaveLogo) {   //生成有logo的二维码
-                    //iv_qrcode_logo.setDrawingCacheEnabled(true);
-                    //Bitmap qrCodeLogoBitmap = iv_qrcode_logo.getDrawingCache();
-                    //iv_qrcode_logo.setDrawingCacheEnabled(false);
-
-
-                   // BitmapDrawable draw = (BitmapDrawable) getResources().getDrawable(R.drawable.logo);
                     BitmapDrawable draw = (BitmapDrawable) iv_qrcode_logo.getDrawable();
                     Bitmap qrCodeLogoBitmap = draw.getBitmap();
-
-
-                    qrCodeBitmap = QRCodeCreateUtil.createHaveLogoQRCode(context, 200, 200, qrCodeLogoBitmap);
+                    qrCodeBitmap = QRCodeCreateUtil.createHaveLogoQRCode(context, 800, 800, qrCodeLogoBitmap);
                 } else { //生成没有logo的二维码
-                    qrCodeBitmap = QRCodeCreateUtil.createNoLogoQRCode(context, 200, 200);
+                    qrCodeBitmap = QRCodeCreateUtil.createNoLogoQRCode(context, 800, 800);
                 }
                 iv_qrcode_img.setImageBitmap(qrCodeBitmap);
                 ll_instructions.setVisibility(View.INVISIBLE);
@@ -89,7 +88,6 @@ public class QRCodeCreate extends Activity implements View.OnClickListener {
                 break;
 
             case R.id.bt_qrcode_logo:  //选择二维码logo
-                Log.i(TAG, "bt_qrcode_logo is click");
                 isHaveLogo = true;
                 //开启图库
                 iv_qrcode_logo.setImageResource(R.drawable.logo);
@@ -105,6 +103,20 @@ public class QRCodeCreate extends Activity implements View.OnClickListener {
                 ll_qrcode.setVisibility(View.INVISIBLE);
                 iv_qrcode_logo.setVisibility(View.INVISIBLE);
                 ll_instructions.setVisibility(View.VISIBLE);
+                break;
+
+            case R.id.bt_save:
+                try {
+                    String filePath = FileRootUtil.getFileRoot() + File.separator + "qr_" + System.currentTimeMillis() + ".jpg";
+                    BitmapDrawable draw = (BitmapDrawable) iv_qrcode_img.getDrawable();
+                    Bitmap qrCodeImg = draw.getBitmap();
+                    qrCodeImg.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(filePath));
+                    iv_qrcode_img.setImageBitmap(BitmapFactory.decodeFile(filePath));
+                    Toast.makeText(this, "以存放到手机根目录下", Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, filePath);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
         }
     }
