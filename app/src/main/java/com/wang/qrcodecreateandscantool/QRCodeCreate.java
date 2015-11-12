@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.FileChooserActivity;
@@ -46,6 +47,7 @@ public class QRCodeCreate extends Activity implements View.OnClickListener {
     private Button bt_qrcode_create;
     private Button bt_reset;
     private Button bt_save;
+    private TextView tv_scan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +64,13 @@ public class QRCodeCreate extends Activity implements View.OnClickListener {
         bt_qrcode_logo = (Button) findViewById(R.id.bt_qrcode_logo);
         bt_reset = (Button) findViewById(R.id.bt_reset);
         bt_save = (Button) findViewById(R.id.bt_save);
+        tv_scan = (TextView) findViewById(R.id.tv_scan);
 
         bt_qrcode_logo.setOnClickListener(this);
         bt_qrcode_create.setOnClickListener(this);
         bt_reset.setOnClickListener(this);
         bt_save.setOnClickListener(this);
+        tv_scan.setOnClickListener(this);
     }
 
     @Override
@@ -109,7 +113,7 @@ public class QRCodeCreate extends Activity implements View.OnClickListener {
                 ll_instructions.setVisibility(View.VISIBLE);
                 break;
 
-            case R.id.bt_save:
+            case R.id.bt_save:  //保存生成的二维码
                 try {
                     String filePath = FileRootUtil.getFileRoot() + File.separator + "qr_" + System.currentTimeMillis() + ".jpg";
                     BitmapDrawable draw = (BitmapDrawable) iv_qrcode_img.getDrawable();
@@ -120,6 +124,11 @@ public class QRCodeCreate extends Activity implements View.OnClickListener {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                break;
+
+            case R.id.tv_scan : //转到扫描二维码的activity
+                Intent intentQRCodeScan = new Intent(this,QRCodeScan.class);
+                startActivity(intentQRCodeScan);
                 break;
         }
     }
