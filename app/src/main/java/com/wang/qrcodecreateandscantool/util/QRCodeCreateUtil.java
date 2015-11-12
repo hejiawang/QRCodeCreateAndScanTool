@@ -1,6 +1,7 @@
 package com.wang.qrcodecreateandscantool.util;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -11,32 +12,28 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import java.util.Hashtable;
 
 /**
- * Android¿Í»§¶Ë¶şÎ¬ÂëÉú³ÉµÄ¹¤¾ßÀà
+ * ç”ŸæˆäºŒç»´ç çš„å·¥å…·ç±»
  * <p/>
  * Created by wang on 2015/11/12.
  */
 public class QRCodeCreateUtil {
 
     /**
-     * Éú³ÉÒ»ÕÅÃ»ÓĞlogoµÄ¶şÎ¬ÂëBitmap
+     * ç”Ÿæˆæ²¡æœ‰logoçš„äºŒç»´ç Bitmap
      *
-     * @param context   ¶şÎ¬ÂëÄÚÈİ
-     * @param widthPix  ¶şÎ¬Âë¿í¶È
-     * @param heightPix ¶şÎ¬Âë¸ß¶È
+     * @param context   äºŒç»´ç å†…å®¹
+     * @param widthPix  äºŒç»´ç å®½åº¦
+     * @param heightPix äºŒç»´ç é«˜åº¦
      * @return Bitmap
      */
     public static Bitmap createNoLogoQRCode(String context, int widthPix, int heightPix) {
         Bitmap bitmap = null;
         try {
             Hashtable<EncodeHintType, Object> hints = new Hashtable<EncodeHintType, Object>();
-            // Ö¸¶¨¾À´íµÈ¼¶
             hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
-            // Ö¸¶¨±àÂë¸ñÊ½
             hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
             BitMatrix bitMatrix = new MultiFormatWriter().encode(context, BarcodeFormat.QR_CODE, widthPix, heightPix, hints);
             int[] pixels = new int[widthPix * heightPix];
-            // ÏÂÃæÕâÀï°´ÕÕ¶şÎ¬ÂëµÄËã·¨£¬Öğ¸öÉú³É¶şÎ¬ÂëµÄÍ¼Æ¬£¬
-            // Á½¸öforÑ­»·ÊÇÍ¼Æ¬ºáÁĞÉ¨ÃèµÄ½á¹û
             for (int y = 0; y < heightPix; y++) {
                 for (int x = 0; x < widthPix; x++) {
                     if (bitMatrix.get(x, y)) {
@@ -53,4 +50,64 @@ public class QRCodeCreateUtil {
         }
         return bitmap;
     }
+
+    /**
+     * ç”Ÿæˆæœ‰logoçš„äºŒç»´ç Bitmap
+     *
+     * @param context   äºŒç»´ç å†…å®¹
+     * @param widthPix  äºŒç»´ç å®½åº¦
+     * @param heightPix äºŒç»´ç é«˜åº¦
+     * @param logo      äºŒç»´ç logoçš„bitmap
+     * @return Bitmap
+     */
+    public static Bitmap createHaveLogoQRCode(String context, int widthPix, int heightPix, Bitmap logo) {
+
+        Bitmap haveLogoQRCodeBitmap = null;
+        Bitmap noLogoQRCodeBitmap = createNoLogoQRCode(context, widthPix, heightPix);
+        haveLogoQRCodeBitmap = addLogo(noLogoQRCodeBitmap, logo);
+        return haveLogoQRCodeBitmap;
+    }
+
+
+    /**
+     * å‘åŸæ¥çš„bitmapä¸Šé¢æ·»åŠ ä¸€ä¸ªbitmap
+     *
+     * @param src  åŸå§‹Bitmap
+     * @param logo æ·»åŠ çš„Bitmap
+     * @return Bitmap
+     */
+    private static Bitmap addLogo(Bitmap src, Bitmap logo) {
+        if (src == null) {
+            return null;
+        }
+        if (logo == null) {
+            return src;
+        }
+        int srcWidth = src.getWidth();
+        int srcHeight = src.getHeight();
+        int logoWidth = logo.getWidth();
+        int logoHeight = logo.getHeight();
+        if (srcWidth == 0 || srcHeight == 0) {
+            return null;
+        }
+        if (logoWidth == 0 || logoHeight == 0) {
+            return src;
+        }
+        float scaleFactor = srcWidth * 1.0f / 8 / logoWidth;
+        Bitmap bitmap = Bitmap.createBitmap(srcWidth, srcHeight, Bitmap.Config.ARGB_8888);
+        try {
+            Canvas canvas = new Canvas(bitmap);
+            canvas.drawBitmap(src, 0, 0, null);
+            canvas.scale(scaleFactor, scaleFactor, srcWidth / 2, srcHeight / 2);
+            canvas.drawBitmap(logo, (srcWidth - logoWidth) / 2, (srcHeight - logoHeight) / 2, null);
+
+            canvas.save(Canvas.ALL_SAVE_FLAG);
+            canvas.restore();
+        } catch (Exception e) {
+            bitmap = null;
+            e.getStackTrace();
+        }
+        return bitmap;
+    }
 }
+
