@@ -50,7 +50,7 @@
         android:textSize="16sp" />
 
     <ImageView
-        android:id="@+id/_iv_qrcode_bitmap"
+        android:id="@+id/iv_qrcode_bitmap"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentLeft="true"
